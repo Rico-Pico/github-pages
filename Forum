@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Full Wypas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #555;
+        }
+        .post-form, .search-form {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .posts {
+            border-top: 2px solid #ccc;
+            padding-top: 20px;
+        }
+        .post {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .post-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .post-author {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Forum Full Wypas</h1>
+
+        <!-- Logowanie -->
+        <div class="login-form">
+            <h2>Logowanie</h2>
+            <input type="text" id="loginUsername" placeholder="Nazwa użytkownika">
+            <input type="password" id="loginPassword" placeholder="Hasło">
+            <button onclick="login()">Zaloguj się</button>
+        </div>
+
+        <!-- Formularz dodawania posta -->
+        <div class="post-form">
+            <h2>Dodaj Post</h2>
+            <textarea id="postContent" placeholder="Wpisz treść posta..." rows="4"></textarea>
+            <button onclick="postMessage()">Dodaj post</button>
+        </div>
+
+        <!-- Wyszukiwarka -->
+        <div class="search-form">
+            <h2>Wyszukaj Post</h2>
+            <input type="text" id="searchQuery" placeholder="Wpisz słowo kluczowe">
+            <button onclick="searchPosts()">Szukaj</button>
+        </div>
+
+        <!-- Lista postów -->
+        <div class="posts" id="postList"></div>
+    </div>
+
+    <script>
+        let loggedIn = false;
+        let user = '';
+        let posts = [];
+
+        // Funkcja logowania
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (username && password) {
+                loggedIn = true;
+                user = username;
+                alert('Zalogowano jako ' + username);
+            } else {
+                alert('Proszę podać poprawne dane logowania');
+            }
+        }
+
+        // Funkcja dodawania postu
+        function postMessage() {
+            if (!loggedIn) {
+                alert('Zaloguj się, aby dodać post!');
+                return;
+            }
+
+            const content = document.getElementById('postContent').value;
+            if (content) {
+                const post = {
+                    author: user,
+                    content: content,
+                    date: new Date().toLocaleString()
+                };
+                posts.push(post);
+                displayPosts();
+                document.getElementById('postContent').value = ''; // Wyczyść pole
+            } else {
+                alert('Treść posta nie może być pusta');
+            }
+        }
+
+        // Funkcja wyświetlania postów
+        function displayPosts() {
+            const postList = document.getElementById('postList');
+            postList.innerHTML = '';
+            posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+                postElement.innerHTML = `
+                    <div class="post-title">Post by ${post.author} - ${post.date}</div>
+                    <div class="post-content">${post.content}</div>
+                `;
+                postList.appendChild(postElement);
+            });
+        }
+
+        // Funkcja wyszukiwania postów
+        function searchPosts() {
+            const query = document.getElementById('searchQuery').value.toLowerCase();
+            const results = posts.filter(post => post.content.toLowerCase().includes(query));
+
+            const postList = document.getElementById('postList');
+            postList.innerHTML = '';
+            results.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+                postElement.innerHTML = `
+                    <div class="post-title">Post by ${post.author} - ${post.date}</div>
+                    <div class="post-content">${post.content}</div>
+                `;
+                postList.appendChild(postElement);
+            });
+        }
+    </script>
+</body>
+</html>
